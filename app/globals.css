@@ -1,6 +1,64 @@
 @import "tailwindcss";
 
-:root {
+@theme {
+  --color-gray-600: #595959; /* rgb(89, 89, 89) */
+  --color-gray-800: #222222; /* rgb(34, 34, 34) */
+  --color-gray-100: #e9e9e9; /* rgb(34, 34, 34) */
+  --color-green-400: #a0e193; /* rgb(160, 225, 147) */
+  --color-green-700: #0f743b; /* rgb(15, 116, 59) */
+  --color-orange-500: #f1641e; /* rgb(241, 100, 30) */
+  --color-orange-600: #cf4018; /* rgb(207, 64, 24) */
+
+  --text-xsm: 13px;
+
+  --breakpoint-lg: 1200px;
+  --breakpoint-md: 900px;
+  --breakpoint-sm: 640px;
+
+  --text-2xl: 27px;
+  --shadow-all-round: 0px 1px 3px 0px #0000004d, 0px 4px 8px 3px #00000026;
+  --shadow-full: 0 2px 10px rgb(0, 0, 0, 0.2);
+  --default-transition-timing-function: transform .2s cubic-bezier(.345,.115,.135,1.42),opacity .15s ease-out;
+  --container-xl: @apply max-w-[1400px] mx-auto px-4.5;
+}
+
+:focus-visible {
+  @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black ;
+}
+
+.focus-blue {
+  @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500;
+}
+
+.max-w {
+  max-width: 1400px;
+  padding-left: 18px;
+  padding-right: 18px;
+  @apply mx-auto;
+}
+.max-wsm {
+  max-width: 1300px;
+  @apply mx-auto lg:px-0 md:px-9 px-3 ;
+}
+
+.shadow-full {
+  @apply shadow-[0_2px_10px_rgb(0_0_0_/_20%)];
+}
+.hero-image-clip {
+  clip-path: circle(farthest-side at 100% 50%);
+}
+
+@media (max-width: 639px) {
+  .hero-image-clip {
+    clip-path: circle(farthest-side at 50% 100%);
+  }
+}
+.custom-hide-clear::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -23,4 +81,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
+} */
