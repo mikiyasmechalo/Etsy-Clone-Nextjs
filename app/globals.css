@@ -18,8 +18,15 @@
   --text-2xl: 27px;
   --shadow-all-round: 0px 1px 3px 0px #0000004d, 0px 4px 8px 3px #00000026;
   --shadow-full: 0 2px 10px rgb(0, 0, 0, 0.2);
+  --shadow-input: 0 0 0 2px #ffffff 0 0 0 2px #3b67d9;
+
   --default-transition-timing-function: transform .2s cubic-bezier(.345,.115,.135,1.42),opacity .15s ease-out;
   --container-xl: @apply max-w-[1400px] mx-auto px-4.5;
+}
+
+@theme inline {
+  --font-g: var(--font-guardian-egyp);
+  --font-gr: var(--font-graphik);
 }
 
 :focus-visible {

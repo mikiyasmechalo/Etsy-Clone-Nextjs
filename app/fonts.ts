@@ -23,12 +23,12 @@ export const Graphik = localFont({
         style: "normal",
       },
       {
-        path: "./fonts/Graphik-500-Medium.otf",
+        path: "./fonts/Graphik-Medium-Web.woff2",
         weight: "500",
         style: "normal",
       },
       {
-        path: "./fonts/Graphik-400-Regular.otf",
+        path: "./fonts/Graphik-Regular-Web.woff2",
         weight: "400",
         style: "normal",
       },
@@ -90,44 +90,3 @@ export const Graphik = localFont({
     ],
     variable: "--font-guardian-egyp",
   });
-  export const ProximaNova = localFont({
-    src: [
-      {
-        path: "./fonts/proximanova-black.otf",
-        weight: "900",
-        style: "normal",
-      },
-      {
-        path: "./fonts/proximanova-extrabold.otf",
-        weight: "700",
-        style: "normal",
-      },
-      {
-        path: "./fonts/proximanova-bold.otf",
-        weight: "600",
-        style: "normal",
-      },
-      {
-        path: "./fonts/proximanova-semibold.otf",
-        weight: "500",
-        style: "normal",
-      },
-      {
-        path: "./fonts/proximanova-regular.otf",
-        weight: "400",
-        style: "normal",
-      },
-      {
-        path: "./fonts/proximanova-light.otf",
-        weight: "300",
-        style: "normal",
-      },
-      {
-        path: "./fonts/proximanova-thin.otf",
-        weight: "200",
-        style: "normal",
-      },
-    ],
-    variable: "--font-proxima-nova",
-  });
-  
