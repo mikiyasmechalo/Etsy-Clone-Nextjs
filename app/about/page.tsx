@@ -130,7 +130,7 @@ const HowEtsyWorks = () => {
             <DoorOpenIcon className="absolute sm:hidden -bottom-5  -left-10 size-[124px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
           </div>
           <div className="flex gap-10 w-full sm:px-10">
-            <CourtHammerIcon className="sm:block hidden bg-[#da726b] flex-shrink-0 size-[130px] aspect-square rounded-full" />
+            <CourtHammerIcon className="sm:block hidden md:hidden bg-[#da726b] flex-shrink-0 size-[130px] aspect-square rounded-full" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">
                 {" "}
@@ -148,7 +148,7 @@ const HowEtsyWorks = () => {
             </div>
           </div>
           <div className="flex gap-10 w-full sm:px-10">
-            <HandWithMailIcon className="sm:block hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f2d0b8]" />
+            <HandWithMailIcon className="sm:block hidden  md:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f2d0b8]" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">
                 {" "}
@@ -167,7 +167,7 @@ const HowEtsyWorks = () => {
             </div>
           </div>
           <div className="flex gap-10 w-full sm:px-10">
-            <DoorOpenIcon className="sm:block hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
+            <DoorOpenIcon className="sm:block hidden  md:hiddensize-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">Shop securely </h3>
               <p className="md:text-lg lg:text-2xl text-sm sm:pr-15 lg:leading-10 font-gr md:font-g">
