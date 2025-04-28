@@ -117,7 +117,7 @@ export default function AuthForm({ type }: AuthFormProps) {
         {type === "register" && (
           <p className="text-sm text-gray-700 mb-4">
             By clicking {buttonText}, Continue with Google, Facebook, or Apple,
-            you agree to Etsy's{" "}
+            you agree to Etsy&apos;s{" "}
             <Link href="/terms" className="text-[#4d6bc6] underline!">
               Terms of Use
             </Link>{" "}
@@ -176,7 +176,7 @@ export default function AuthForm({ type }: AuthFormProps) {
         {type === "signin" && (
           <p>
             By clicking {buttonText}, Continue with Google, Facebook, or Apple,
-            you agree to Etsy's{" "}
+            you agree to Etsy&apos;s{" "}
             <Link href="/terms" className="text-black hover:underline">
               Terms of Use
             </Link>{" "}
@@ -189,7 +189,7 @@ export default function AuthForm({ type }: AuthFormProps) {
         )}
         <p className="mt-2">
           Etsy may send you communications; you may change your preferences in
-          your account settings. We'll never post without your permission.
+          your account settings. We&apos;ll never post without your permission.
         </p>
       </div>
     </div>

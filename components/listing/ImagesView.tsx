@@ -11,10 +11,9 @@ import clsx from "clsx";
 import { HeartButton } from "../RectangleCard";
 import ScrollButtons from "../ScrollButtons";
 
-import { productData, ProductDetails } from "@/data/products";
+import { ProductDetails } from "@/data/products";
 
 import { IoStar } from "react-icons/io5";
-import ReviewsSection from "./ReviewsSection";
 interface RatingProps {
   rating: number;
   large?: boolean;

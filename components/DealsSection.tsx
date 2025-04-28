@@ -138,12 +138,14 @@ const DealsSection = () => {
   };
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.addEventListener("scroll", updateButtonState);
+    const container = containerRef.current;
+    if (!container) return;
+    if (container) {
+      container.addEventListener("scroll", updateButtonState);
       updateButtonState();
 
       return () => {
-        containerRef.current?.removeEventListener("scroll", updateButtonState);
+        container.removeEventListener("scroll", updateButtonState);
       };
     }
   }, []);
@@ -151,7 +153,7 @@ const DealsSection = () => {
   return (
     <div className="hidden md:block">
       <div className="flex justify-between items-center mb-4 ">
-        <h3 className="text-2xl font-medium">Today's big deals</h3>
+        <h3 className="text-2xl font-medium">Today&apos;s big deals</h3>
         <ScrollButtons
           className="gap-2 flex"
           scrollLeft={scrollLeft}

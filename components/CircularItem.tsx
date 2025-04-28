@@ -3,10 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-interface CircularItemProps extends ProductDetails {
-}
 
-const CircularItem = ({  title, images, id }: CircularItemProps) => {
+const CircularItem = ({  title, images, id }: ProductDetails) => {
   return (
     <Link href={`/listing/${id}`}>
       <div className="flex items-center justify-center flex-col gap-2 rounded-2xl group relative">

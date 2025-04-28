@@ -73,7 +73,7 @@ const cartItems: CartItem[] = [
 // CartItemCard component
 const CartItemCard = ({ item }: { item: CartItem }) => {
   const [quantity, setQuantity] = useState(item.quantity);
-  const [showOptions, setShowOptions] = useState(false);
+  // const [showOptions, setShowOptions] = useState(false);
 
   return (
     <div className="p-6 rounded-2xl border border-gray-200">
@@ -338,9 +338,9 @@ export default function CartPage() {
         </div>
         <div>
           <p className="font-light">
-            <span className="font-medium">Buy confidently</span> with Etsy's
+            <span className="font-medium">Buy confidently</span> with Etsy&apos;s
             Purchase Protection program for buyers, get a full refund in the
-            rare case your item doesn't arrive, arrives damaged, or isn't as
+            rare case your item doesn&apos;t arrive, arrives damaged, or isn&apos;t as
             described.{" "}
             <Link href="/purchase-protection" className="underline!">
               See eligibility
@@ -371,7 +371,7 @@ export default function CartPage() {
               !canCompletePayment && "opacity-70 pointer-events-none"
             )}
           >
-            <h2 className="text-lg font-medium mb-4">How you'll pay</h2>
+            <h2 className="text-lg font-medium mb-4">How you&apos;ll pay</h2>
 
             {/* Payment methods */}
             <div className="mb-6">

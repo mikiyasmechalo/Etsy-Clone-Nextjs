@@ -235,7 +235,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
                 <p className="font-medium">Etsy Purchase Protection</p>
                 <p className="text-sm">
                   Shop confidently on Etsy knowing if something goes wrong with
-                  an order, we've got your back for all eligible purchases —{" "}
+                  an order, we&apos;ve got your back for all eligible purchases —{" "}
                   <Link href="#" className="underline!">
                     see program terms
                   </Link>
@@ -387,7 +387,7 @@ export const FAQData = () => {
               onClick={() => toggleFaq("tracking")}
             >
               <span className="text-xsm font-medium text-left">
-                Tracking status "Pre-Transit"
+                Tracking status &apos;Pre-Transit&apos;
               </span>
               <ChevronDown
                 className={`w-4 h-4 transition-transform ${
@@ -413,9 +413,9 @@ export const FAQData = () => {
                   letter/parcel leaves Germany.
                 </p>
                 <p className="mt-2">
-                  Sometimes, the envelopes or parcels won't get scanned at all,
-                  which results in the status "Pre-Transit". Don't worry, your
-                  order is on it's way to you!
+                  Sometimes, the envelopes or parcels won&apos;t get scanned at all,
+                  which results in the status &apos;Pre-Transit&apos;. Don&apos;t worry, your
+                  order is on it&apos;s way to you!
                 </p>
               </div>
             )}
@@ -440,10 +440,10 @@ export const FAQData = () => {
             {expandedFaq === "never-arrived" && (
               <div className="py-3 px-2 text-xsm text-gray-600">
                 <p>
-                  I'm sorry if something happened to your order. Sometimes
+                  I&apos;m sorry if something happened to your order. Sometimes
                   orders take longer to arrive than anticipated. I would kindly
                   ask you to wait 1 week after the estimated delivery date for
-                  your order to arrive. If the order still hasn't arrived,
+                  your order to arrive. If the order still hasn&apos;t arrived,
                   please message me and I can either send the items again or
                   refund your order.
                 </p>
@@ -539,7 +539,7 @@ export const FAQData = () => {
                   mail.
                 </p>
                 <p className="mt-2">
-                  If a package is returned due to the customer's failure to pick
+                  If a package is returned due to the customer&apos;s failure to pick
                   it up or reschedule the delivery, the shipping fee is
                   non-refundable, as the shipping service was already provided.
                   A refund will be issued only for the product(s) cost.

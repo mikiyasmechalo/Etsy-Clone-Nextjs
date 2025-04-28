@@ -23,9 +23,10 @@ import { BsCake } from "react-icons/bs";
 import { GuardianEgyp } from "../fonts";
 import ScrollButtons from "@/components/ScrollButtons";
 import ButtonLink from "@/components/ui/ButtonLink";
-import { categoryData, ProductCard } from "../c/[id]/page";
 import { productData, ProductDetails } from "@/data/products";
 import clsx from "clsx";
+import { categoryData } from "@/data/categories";
+import ProductCard from "@/components/ProductCard";
 
 interface Category {
   id: string;
@@ -228,6 +229,7 @@ const page = () => {
 export default page;
 
 function GiftsByInterestSection({ interests }: { interests: Interest[] }) {
+  const category = "accessories";
   const [selectedInterest, setSelectedInterest] = useState("1");
   return (
     <div className="">
@@ -272,7 +274,7 @@ function GiftsByInterestSection({ interests }: { interests: Interest[] }) {
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 grid-rows-1 overflow-hidden md:grid-cols-6 gap-4 justify-center items-start">
-          {categoryData["accessories"].featuredProducts.slice(0, 6).map((p) => (
+          {categoryData.find(c => c.title === category)?.featuredProducts.slice(0, 6).map((p) => (
             <ProductCard
               key={p.id}
               product={p}
@@ -321,7 +323,7 @@ const InspireGifterSection = () => {
             </h3>
           )}
           <div className="flex gap-5 flex-wrap justify-center">
-            {chunk.map((item, itemIndex) => (
+            {chunk.map((item) => (
               <GiftCard
                 key={item.id}
                 image={item.images[0]}

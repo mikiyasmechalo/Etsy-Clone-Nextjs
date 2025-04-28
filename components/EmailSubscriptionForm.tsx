@@ -75,9 +75,9 @@ const RenewableEnergyBadge = () => {
           className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 hover:opacity-100 group-hover:opacity-100 
           opacity-0 pointer-events-none w-64 p-3 bg-white text-gray-800 text-xs rounded shadow-lg cursor-default text-center"
         >
-          Etsy's 100% renewable electricity commitment includes the electricity
+          Etsy&apos;s 100% renewable electricity commitment includes the electricity
           used by the data centers that host Etsy.com, the Sell on Etsy app, and
-          the Etsy app, as well as the electricity that powers Etsy's global
+          the Etsy app, as well as the electricity that powers Etsy&apos;s global
           offices and employees working remotely from home in the US.
           <div className="absolute left-1/2 -translate-x-1/2 bottom-0 -mb-2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white"></div>
         </div>

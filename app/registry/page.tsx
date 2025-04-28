@@ -149,7 +149,7 @@ const page = () => {
         <h3
           className={`text-center text-2xl font-extralight pb-2 font-g`}
         >
-          Questions? We've got answers
+          Questions? We&apos;ve got answers
         </h3>
         {FAQData.map((faq) => (
           <React.Fragment key={faq.id}>
@@ -168,7 +168,7 @@ const page = () => {
   );
 };
 
-export const FAQCard = ({
+const FAQCard = ({
   question,
   answer,
 }: {
@@ -203,7 +203,7 @@ export const FAQCard = ({
   );
 };
 
-export const RegistryCard = ({
+const RegistryCard = ({
   image,
   title,
   text,

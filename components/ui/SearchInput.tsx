@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { IoSearchOutline } from "react-icons/io5";
 
 const SearchInput = ({onChange, value, active, setActive}: { onChange: (val:string) => void, value: string, active: boolean, setActive: (active: boolean) => void }) => {

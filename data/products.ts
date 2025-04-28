@@ -12,6 +12,7 @@ export interface ProductDetails {
   }[];
   quantityAvailable: number;
   shippingInfo: {
+    freeShipping?: boolean;
     countryFrom: string;
     cost: number;
     estimatedDelivery: string;

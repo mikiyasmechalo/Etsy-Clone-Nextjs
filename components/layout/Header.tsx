@@ -1,10 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  IoHeartOutline,
   IoMenu,
-  IoCartOutline,
-  IoGiftOutline,
 } from "react-icons/io5";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 
@@ -30,7 +27,7 @@ const Header = () => {
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const [inputActive, setInputActive] = useState(false);
-  const [cartItems, setCartCount] = useState(1);
+  const [cartItems] = useState(1);
   
 
   useEffect(() => {
@@ -205,7 +202,6 @@ export default Header;
 
 export const SearchResults = ({
   filteredCategories,
-  open,
 }: {
   filteredCategories: Category[];
   open: boolean;

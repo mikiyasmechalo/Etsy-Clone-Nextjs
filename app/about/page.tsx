@@ -13,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [canPlay, setCanPlay] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -21,7 +21,7 @@ const page = () => {
     const video = videoRef.current;
     if (!video) return;
     if (!video.paused) setCanPlay(true);
-  });
+  }, []);
 
   return (
     <div className="flex flex-col justify-center md:pt-32 font-g">
@@ -322,6 +322,7 @@ const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
         >
           {items.map((e, i) => (
             <div
+              key={i}
               className={clsx(
                 "w-full flex-shrink-0 text-white md:px-8 text-center",
                 activeItem == i
@@ -345,6 +346,7 @@ const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
       <div className="flex w-full items-center justify-center gap-5">
         {items.map((e, i) => (
           <div
+          key={i}
             className={clsx(
               "size-1.5 rounded-full transition-all duration-200",
               activeItem == i ? "scale-200 bg-gray-100" : "bg-gray-300"
@@ -356,4 +358,4 @@ const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
   );
 };
 
-export default page;
+export default Page;

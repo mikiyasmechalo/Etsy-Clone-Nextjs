@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductDetails } from "@/data/products";
 import clsx from "clsx";
-import { FaPlay } from "react-icons/fa";
 import { IoPlaySharp } from "react-icons/io5";
 
 export interface RectangleCardProps extends ProductDetails {

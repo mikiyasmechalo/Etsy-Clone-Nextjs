@@ -581,9 +581,7 @@ export const ShopIcon: React.FC = () => {
           transform: "translate3d(0px, 0px, 0px)",
         }}
       >
-        <div
-          className="animation"
-        >
+        <div className="animation">
           <div className="animation__placeholder"></div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -1213,6 +1211,7 @@ export const ShopIcon: React.FC = () => {
 export const CatIcon = ({ className }: { className?: string }) => (
   <>
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1080 680"
       focusable="false"
