@@ -17,11 +17,11 @@ export const Graphik = localFont({
         weight: "700",
         style: "normal",
       },
-      {
-        path: "./fonts/Graphik-600-SemiBold.otf",
-        weight: "600",
-        style: "normal",
-      },
+      // {
+      //   path: "./fonts/Graphik-600-SemiBold.otf",
+      //   weight: "600",
+      //   style: "normal",
+      // },
       {
         path: "./fonts/Graphik-Medium-Web.woff2",
         weight: "500",
