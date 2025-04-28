@@ -147,7 +147,7 @@ const page = () => {
           <QuestionsIcon/>
         </div>
         <h3
-          className={`text-center text-2xl font-extralight pb-2 font-g`}
+          className={`text-center text-2xl font-light pb-2 font-g`}
         >
           Questions? We&apos;ve got answers
         </h3>
