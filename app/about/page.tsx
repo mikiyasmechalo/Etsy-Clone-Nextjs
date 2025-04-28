@@ -130,7 +130,7 @@ const HowEtsyWorks = () => {
             <DoorOpenIcon className="absolute sm:hidden -bottom-5  -left-10 size-[124px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
           </div>
           <div className="flex gap-10 w-full sm:px-10">
-            <CourtHammerIcon className="sm:block hidden md:hidden bg-[#da726b] flex-shrink-0 size-[130px] aspect-square rounded-full" />
+            <CourtHammerIcon className="sm:block hidden lg:hidden bg-[#da726b] flex-shrink-0 size-[130px] aspect-square rounded-full" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">
                 {" "}
@@ -148,7 +148,7 @@ const HowEtsyWorks = () => {
             </div>
           </div>
           <div className="flex gap-10 w-full sm:px-10">
-            <HandWithMailIcon className="sm:block hidden  md:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f2d0b8]" />
+            <HandWithMailIcon className="sm:block hidden lg:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f2d0b8]" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">
                 {" "}
@@ -167,7 +167,7 @@ const HowEtsyWorks = () => {
             </div>
           </div>
           <div className="flex gap-10 w-full sm:px-10">
-            <DoorOpenIcon className="sm:block hidden  md:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
+            <DoorOpenIcon className="sm:block hidden lg:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">Shop securely </h3>
               <p className="md:text-lg lg:text-2xl text-sm sm:pr-15 lg:leading-10 font-gr md:font-g">
@@ -346,7 +346,7 @@ const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
       <div className="flex w-full items-center justify-center gap-5">
         {items.map((e, i) => (
           <div
-          key={i}
+            key={i}
             className={clsx(
               "size-1.5 rounded-full transition-all duration-200",
               activeItem == i ? "scale-200 bg-gray-100" : "bg-gray-300"
