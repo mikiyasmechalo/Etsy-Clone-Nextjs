@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, Info, MoreHorizontal } from "lucide-react";
@@ -15,242 +15,160 @@ import {
   PaypalIcon,
   VisaIcon,
 } from "@/components/Icons";
+import useCart from "@/hooks/useCart";
+import { CartItem } from "@/data/types";
+import { getImageUrl } from "@/utils/image";
 
-// Cart item type
-interface CartItem {
-  id: string;
-  image: string;
-  title: string;
-  seller: string;
-  sellerImage: string;
-  price: number;
-  originalPrice?: number;
-  discount?: string;
-  options?: {
-    name: string;
-    value: string;
-  }[];
-  saleEndsIn?: string;
-  quantity: number;
-  shipping?: number;
-  shippingMethod?: string;
-  hasOptions: boolean;
-}
+const updateCartItem = async (
+  productId: number,
+  quantity: number
+): Promise<{ success: boolean; message?: string }> => {
+  console.log(
+    `Mock API: Updating product ${productId} quantity to ${quantity}`
+  );
 
-// Sample cart data
-const cartItems: CartItem[] = [
-  {
-    id: "1",
-    image: "/placeholder.svg?height=200&width=200",
-    title: "Hexagon Moss Agate Gemstone 925 Silver 14K Rose Gold Plated Ring",
-    seller: "BloozieBluJewelry",
-    sellerImage: "/placeholder.svg?height=200&width=200",
-    price: 64.99,
-    originalPrice: 99.99,
-    discount: "35% off",
-    options: [
-      { name: "Ring size", value: "4 US" },
-      { name: "Metal Type", value: "925 Yellow" },
-    ],
-    saleEndsIn: "8:08:20",
-    quantity: 1,
-    shipping: 18.08,
-    shippingMethod: "(Standard International)",
-    hasOptions: true,
-  },
-  {
-    id: "2",
-    image: "/placeholder.svg?height=200&width=200",
-    title: "Hexagon Moss Agate 925 Silver 14K Rose Gold Plated Ring",
-    seller: "STFOLIVERJEWELRY",
-    sellerImage: "/placeholder.svg?height=200&width=200",
-    price: 159.4,
-    quantity: 1,
-    hasOptions: false,
-  },
-];
+  await new Promise((resolve) => setTimeout(resolve, 300));
 
-// CartItemCard component
-const CartItemCard = ({ item }: { item: CartItem }) => {
-  const [quantity, setQuantity] = useState(item.quantity);
-  // const [showOptions, setShowOptions] = useState(false);
+  return { success: true, message: "Cart item updated successfully (mock)." };
+};
+
+const deleteCartItem = async (
+  productId: number
+): Promise<{ success: boolean; message?: string }> => {
+  console.log(`Mock API: Deleting product ${productId}`);
+
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  return { success: true, message: "Cart item deleted successfully (mock)." };
+};
+
+const CartItemCard = ({
+  item,
+  onUpdateQuantity,
+  onDelete,
+}: {
+  item: CartItem;
+  onUpdateQuantity: (productId: number, quantity: number) => void;
+  onDelete: (productId: number) => void;
+}) => {
+  const [quantity, setQuantity] = useState(item.cart_quantity);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    setQuantity(item.cart_quantity);
+  }, [item.cart_quantity]);
+
+  const handleQuantityChange = async (newQuantity: number) => {
+    if (newQuantity < 1) return;
+    if (newQuantity > item.product_stock) {
+      alert(`Cannot add more than available stock (${item.product_stock})`);
+      return;
+    }
+
+    setIsUpdating(true);
+
+    const result = await updateCartItem(item.product_id, newQuantity);
+    setIsUpdating(false);
+
+    if (result.success) {
+      setQuantity(newQuantity);
+      onUpdateQuantity(item.product_id, newQuantity);
+    } else {
+      alert(`Failed to update quantity: ${result.message}`);
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+
+    const result = await deleteCartItem(item.product_id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      onDelete(item.product_id);
+    } else {
+      alert(`Failed to delete item: ${result.message}`);
+    }
+  };
 
   return (
     <div className="p-6 rounded-2xl border border-gray-200">
-      <div className="flex items-start gap-2">
-        {/* Seller info */}
+      <div className="flex items-start gap-4">
+        <div className="w-24 h-24 flex-shrink-0 relative">
+          <Image
+            src={getImageUrl(item.product_image_url) || "/placeholder.svg"}
+            alt={item.product_name}
+            fill
+            style={{ objectFit: "cover" }}
+            className="rounded-md"
+          />
+        </div>
         <div className="flex-1">
-          <div className="flex items-center gap-5 mb-4">
-            <Link
-              href={`/shop/${item.seller}`}
-              className="hover:underline! flex gap-4 items-center"
-            >
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={40}
-                height={40}
-                className="rounded-lg"
-              />
-              {item.seller}
-            </Link>
-            <button className="text-gray-500">
-              <MoreHorizontal className="w-5 h-5" />
-            </button>
+          <h3 className="text-base font-normal mb-2 line-clamp-2">
+            {item.product_name}
+          </h3>
+
+          <div className="text-sm text-gray-700 mb-2">
+            Seller: [Seller Name]
           </div>
 
-          <div className="flex gap-4">
-            {/* Product image */}
-            <div className="w-32 h-32 flex-shrink-0">
-              <Image
-                src={item.image || "/placeholder.svg"}
-                alt={item.title}
-                width={128}
-                height={128}
-                className="w-full h-full object-cover rounded-md"
-              />
-            </div>
-
-            {/* Product details */}
-            <div className="flex-1">
-              <h3 className="text-base font-normal mb-2 line-clamp-2">
-                {item.title}
-              </h3>
-
-              {/* Selected options */}
-              {item.hasOptions && item.options && (
-                <div className="mb-3">
-                  {item.options.map((option, index) => (
-                    <div key={index} className="text-sm text-gray-700">
-                      <span className="font-medium">{option.name}: </span>
-                      <span>{option.value}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Missing options warning */}
-              {!item.hasOptions && (
-                <Link
-                  href={"#"}
-                  className="bg-[#ffdde6] p-3 rounded-md mb-3 flex items-center gap-2 group"
-                >
-                  <Info className="w-5 h-5 fill-white text-black flex-shrink-0" />
-                  <span className="text-sm underline">Choose Options</span>
-                </Link>
-              )}
-
-              {/* Sale countdown */}
-              {item.saleEndsIn && (
-                <div className="text-sm text-green-700 mb-3">
-                  Sale ends in {item.saleEndsIn}
-                </div>
-              )}
-
-              {/* Action buttons */}
-              <div className="flex flex-wrap gap-3">
-                {item.hasOptions ? (
-                  <>
-                    <div className="relative">
-                      <select
-                        value={quantity}
-                        onChange={(e) => setQuantity(Number(e.target.value))}
-                        className="appearance-none cursor-pointer bg-white border border-gray-300 rounded-md py-1 pl-3 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
-                      >
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <option
-                            key={num}
-                            value={num}
-                            className="cursor-pointer"
-                          >
-                            {num}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-2 top-4 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                    {/* <Dropdown
-                      buttonContent={1}
-                      options={["1", "2", "3", "4", "5"]}
-                      selectedOption={"1"}
-                      onSelect={(s)=>{}}
-                    ></Dropdown> */}
-                    <ButtonLink
-                      small
-                      btnClassName="text-sm border-none"
-                      className="group-hover:bg-gray-200"
-                    >
-                      Edit
-                    </ButtonLink>
-                    <ButtonLink
-                      small
-                      btnClassName="text-sm border-none"
-                      className="group-hover:bg-gray-200"
-                    >
-                      Save for later
-                    </ButtonLink>
-                    <ButtonLink
-                      small
-                      btnClassName="text-sm border-none"
-                      className="group-hover:bg-gray-200"
-                    >
-                      Remove
-                    </ButtonLink>
-                  </>
-                ) : (
-                  <>
-                    <ButtonLink
-                      small
-                      btnClassName="text-sm border-none"
-                      className="group-hover:bg-gray-200"
-                    >
-                      Save for later
-                    </ButtonLink>
-                    <ButtonLink
-                      small
-                      btnClassName="text-sm border-none"
-                      className="group-hover:bg-gray-200"
-                    >
-                      Remove
-                    </ButtonLink>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Price */}
-            <div className="flex items-end flex-col gap-2 mb-3 px-10">
-              {item.discount && (
-                <span className="bg-green-400 text-[11px] px-2 py-0.5 rounded-full">
-                  {item.discount}
-                </span>
-              )}
-              <span
-                className={`font-medium ${item.discount && "text-green-700 "}`}
+          <div className="flex flex-wrap gap-3 items-center">
+            <div className="relative">
+              <select
+                value={quantity}
+                onChange={(e) => handleQuantityChange(Number(e.target.value))}
+                className="appearance-none cursor-pointer bg-white border border-gray-300 rounded-md py-1 pl-3 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
+                disabled={isUpdating || isDeleting}
               >
-                USD {item.price.toFixed(2)}
-              </span>
-              {item.originalPrice && (
-                <span className="text-gray-500 line-through text-sm">
-                  USD {item.originalPrice.toFixed(2)}
-                </span>
-              )}
+                {[
+                  ...Array(item.product_stock > 5 ? 5 : item.product_stock),
+                ].map((_, index) => (
+                  <option
+                    key={index + 1}
+                    value={index + 1}
+                    className="cursor-pointer"
+                  >
+                    {index + 1}
+                  </option>
+                ))}
+                {item.product_stock > 5 && (
+                  <option value={item.product_stock}>
+                    {item.product_stock} (Max)
+                  </option>
+                )}
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
             </div>
+            <ButtonLink
+              small
+              btnClassName="text-sm border-none"
+              className="group-hover:bg-gray-200"
+              onClick={handleDelete}
+              disabled={isUpdating || isDeleting}
+            >
+              {isDeleting ? "Removing..." : "Remove"}
+            </ButtonLink>
           </div>
+        </div>
+        <div className="flex flex-col items-end gap-1 px-4">
+          <span className="font-medium">
+            USD {(parseFloat(item.price) * quantity).toFixed(2)}
+          </span>
+          <span className="text-gray-600 text-sm">
+            (USD {parseFloat(item.price).toFixed(2)} each)
+          </span>
         </div>
       </div>
 
-      {/* Shipping info */}
-      {item.hasOptions && item.shipping && (
-        <div className="mt-4 flex items-center">
-          <div className="text-sm text-gray-700 flex items-center">
-            <span>
-              Shipping: USD {item.shipping.toFixed(2)} {item.shippingMethod}
-            </span>
-            <ChevronDown className="w-4 h-4 ml-1" />
-          </div>
+      {/* <div className="mt-4 flex items-center">
+        <div className="text-sm text-gray-700 flex items-center">
+          <span>
+            Shipping: [Shipping Cost] (Standard)
+          </span>
+          <ChevronDown className="w-4 h-4 ml-1" />
         </div>
-      )}
+      </div> */}
     </div>
   );
 };
@@ -304,66 +222,84 @@ const paymentIcons = {
 };
 
 export default function CartPage() {
+  const {
+    cartItems,
+    cartItemsAmount,
+    isLoadingCart,
+    error,
+    fetchCart,
+    addItemToCart,
+  } = useCart();
+
   const [selectedPayment, setSelectedPayment] = useState("visa");
   const [isGift, setIsGift] = useState(false);
   const shipTo = "Ethiopia";
-  // Calculate totals
+
+  const handleUpdateQuantity = (productId: number, newQuantity: number) => {
+    //   setCartItems((prevItems) =>
+    //     prevItems.map((item) =>
+    //       item.product_id === productId
+    //         ? { ...item, cart_quantity: newQuantity }
+    //         : item
+    //     )
+    //   );
+  };
+
+  const handleDeleteItem = (productId: number) => {
+    //   setCartItems((prevItems) =>
+    //     prevItems.filter((item) => item.product_id !== productId)
+    //   );
+  };
+
   const itemsTotal = cartItems.reduce(
-    (sum, item) => sum + (item.originalPrice || item.price),
+    (sum, item) => sum + parseFloat(item.price) * item.cart_quantity,
     0
   );
-  const discount =
-    cartItems.reduce(
-      (sum, item) => sum + ((item.originalPrice || 0) - item.price),
-      0
-    ) * -1;
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
-  const shipping = cartItems.reduce(
-    (sum, item) => sum + (item.shipping || 0),
-    0
-  );
+
+  const subtotal = itemsTotal;
+
+  const shipping = 0;
+
   const total = subtotal + shipping;
 
-  const canCompletePayment = false;
-  //   const canCompletePayment = cartItems.some((item) => !item.hasOptions);
+  const canCompletePayment = cartItems.length > 0;
 
   return (
-    <div className="max-wsm mx-auto px-4 py-8">
+    <div className="max-w mx-auto px-4 py-8">
       <h1 className="text-2xl font-medium mb-6">Your cart</h1>
-
-      {/* Purchase protection */}
       <div className="flex items-start gap-3 mb-6 py-4 bg-white rounded-md">
         <div className="flex-shrink-0 mt-1">
           <LuHeartHandshake size={40} className="fill-[#d7e6f5]" />
         </div>
         <div>
           <p className="font-light">
-            <span className="font-medium">Buy confidently</span> with Etsy&apos;s
-            Purchase Protection program for buyers, get a full refund in the
-            rare case your item doesn&apos;t arrive, arrives damaged, or isn&apos;t as
-            described.{" "}
+            <span className="font-medium">Buy confidently</span> with
+            Etsy&apos;s Purchase Protection program for buyers, get a full
+            refund in the rare case your item doesn&apos;t arrive, arrives
+            damaged, or isn&apos;t as described.
             <Link href="/purchase-protection" className="underline!">
               See eligibility
             </Link>
           </p>
         </div>
       </div>
-
-      {/* Cart items */}
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="lg:w-2/3 flex flex-col gap-8">
           {cartItems.map((item) => (
-            <CartItemCard key={item.id} item={item} />
+            <CartItemCard
+              key={item.product_id}
+              item={item}
+              onUpdateQuantity={handleUpdateQuantity}
+              onDelete={handleDeleteItem}
+            />
           ))}
 
-          {/* Carbon offset message */}
           <div className="flex items-center gap-2 mt-6 text-sm">
             <FaLeaf size={16} />
             <span>Etsy offsets carbon emissions from every delivery</span>
           </div>
         </div>
 
-        {/* Order summary */}
         <div className="lg:w-1/3">
           <div
             className={clsx(
@@ -373,7 +309,6 @@ export default function CartPage() {
           >
             <h2 className="text-lg font-medium mb-4">How you&apos;ll pay</h2>
 
-            {/* Payment methods */}
             <div className="mb-6">
               <PaymentOption
                 id="visa"
@@ -398,16 +333,12 @@ export default function CartPage() {
               />
             </div>
 
-            {/* Order totals */}
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-600">Item(s) total</span>
                 <span>USD {itemsTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Shop discount</span>
-                <span>-USD {discount.toFixed(2)}</span>
-              </div>
+
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
                 <span>USD {subtotal.toFixed(2)}</span>
@@ -427,7 +358,6 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Gift option */}
             <div className="flex items-center mb-6">
               <div
                 className={`w-5 h-5 border ${
@@ -452,16 +382,16 @@ export default function CartPage() {
             </div>
 
             <div className="flex flex-col gap-4 pb-5">
-              {/* Checkout button */}
               <ButtonLink
                 btnClassName={`w-full pointer-events-auto ${
                   !canCompletePayment && "cursor-not-allowed"
                 }`}
                 className="bg-gray-500 hover:bg-gray-600"
+                disabled={!canCompletePayment}
               >
                 Proceed to checkout
               </ButtonLink>
-              {/* Apply coupon */}
+
               <span>
                 <ButtonLink
                   btnClassName={clsx("border-none", "text-black", "gap-5")}
@@ -473,7 +403,6 @@ export default function CartPage() {
               </span>
             </div>
 
-            {/* Tax info */}
             <div className="text-sm text-gray-600">
               <p>Local taxes included (where applicable)</p>
               <p className="mt-2">
