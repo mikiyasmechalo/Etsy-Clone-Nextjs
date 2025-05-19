@@ -48,6 +48,7 @@ const HeroSection = () => {
               width={500}
               height={500}
               className="sm:w-1/2 w-full sm:object-cover hero-image-clip"
+              priority
             />
           </div>
         </Link>
@@ -58,7 +59,7 @@ const HeroSection = () => {
               alt="hero-image"
               width={400}
               height={400}
-              className=""
+              priority
             />
             <div className="absolute inset bg-gradient-to-t from-black/60 via-transparent to-transparent w-full h-full top-0 left-0"></div>
             <div className="absolute bottom-0 left-0 text-white w-full p-4.5">

@@ -2,118 +2,23 @@
 import React, { useRef, useEffect, useState } from "react";
 import DetailCard from "./DetailCard";
 import ScrollButtons from "./ScrollButtons";
-
-const data = [
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-2.jpg",
-    originalPrice: 16.63,
-    discountPrice: 4.99,
-    tagline: "Buy one get one free",
-    rating: 4.8,
-    name: "Personalized 20oz Vacation Tumbler, Custom Travel Mug, Beach Tumbler, Stainless Steel Mug, Girls Weekend Gift, Laser Engraved Tumbler",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-2.jpg",
-    originalPrice: 16.63,
-    discountPrice: 4.99,
-    tagline: "Buy one get one free",
-    rating: 4.8,
-    name: "Personalized 20oz Vacation Tumbler, Custom Travel Mug, Beach Tumbler, Stainless Steel Mug, Girls Weekend Gift, Laser Engraved Tumbler",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-  {
-    image: "/detail-1.jpg",
-    originalPrice: 100,
-    discountPrice: 90,
-    tagline: "Biggest discount in 90 days",
-    rating: 4.9,
-    name: "Personalized Crochet Baby Rattle Toy for Girls and Boys, Animal Crochet Baby Rattle, Baby Shower Gift, Baby Rattle Grasping Toy,Newborn Gift",
-  },
-];
-
+import { Product } from "@/data/types";
+import { getDiscountedProducts } from "@/app/api";
 const DealsSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [disableLeft, setDisableLeft] = useState(true);
   const [disableRight, setDisableRight] = useState(false);
+  const [prodcts, setProducts] = useState<Product[]>();
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchDiscProducts = async () => {
+      const response = await getDiscountedProducts();
+      setProducts(response.data);
+      setIsLoading(false);
+    };
+    fetchDiscProducts();
+  }, []);
 
   const scrollLeft = () => {
     if (containerRef.current) {
@@ -167,8 +72,8 @@ const DealsSection = () => {
         className="flex gap-5 overflow-x-auto scroll-smooth p-2"
         style={{ scrollbarWidth: "none" }}
       >
-        {data.map((item, index) => (
-          <DetailCard key={index} {...item} />
+        {prodcts?.map((item, index) => (
+          <DetailCard rating={0} tagline="" key={index} {...item} />
         ))}
       </div>
     </div>

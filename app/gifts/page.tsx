@@ -27,6 +27,7 @@ import { productData, ProductDetails } from "@/data/products";
 import clsx from "clsx";
 import { categoryData } from "@/data/categories";
 import ProductCard from "@/components/ProductCard";
+import useProducts from "@/hooks/useProducts";
 
 interface Category {
   id: string;
@@ -107,17 +108,17 @@ const categories: Category[] = [
     icon: <GiBowTie className="size-11" />,
   },
   {
-    id: "housewarming",
+    id: "housewarming1",
     name: "Housewarming",
     icon: <GiHouse className="size-11" />,
   },
   {
-    id: "housewarming",
+    id: "housewarming2",
     name: "Housewarming",
     icon: <GiHouse className="size-11" />,
   },
   {
-    id: "housewarming",
+    id: "housewarming3",
     name: "Housewarming",
     icon: <GiHouse className="size-11" />,
   },
@@ -230,6 +231,7 @@ export default page;
 
 function GiftsByInterestSection({ interests }: { interests: Interest[] }) {
   const category = "accessories";
+  const { products } = useProducts();
   const [selectedInterest, setSelectedInterest] = useState("1");
   return (
     <div className="">
@@ -245,9 +247,11 @@ function GiftsByInterestSection({ interests }: { interests: Interest[] }) {
               key={interest.id}
               outline
               className={clsx(
-                "sm:bg-gray-100", // Base class for span background
-                selectedInterest !== interest.id && "bg-white", // Conditional background class for span
-                selectedInterest === interest.id ? "border-2" : ["md:border-none", "border", "border-gray-400"] // Conditional border classes
+                "sm:bg-gray-100",
+                selectedInterest !== interest.id && "bg-white",
+                selectedInterest === interest.id
+                  ? "border-2"
+                  : ["md:border-none", "border", "border-gray-400"]
               )}
             >
               {interest.name}
@@ -274,7 +278,7 @@ function GiftsByInterestSection({ interests }: { interests: Interest[] }) {
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 grid-rows-1 overflow-hidden md:grid-cols-6 gap-4 justify-center items-start">
-          {categoryData.find(c => c.title === category)?.featuredProducts.slice(0, 6).map((p) => (
+          {products.map((p) => (
             <ProductCard
               key={p.id}
               product={p}

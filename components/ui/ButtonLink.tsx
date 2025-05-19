@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 // Assuming Link is imported from your routing library (e.g., next/link)
 
-interface ButtonLinkProps {
+interface ButtonLinkProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   href?: string;
@@ -22,7 +22,7 @@ const ButtonLink = ({
   small,
   btnClassName,
   className,
-  type = "button",
+  ...props
 }: ButtonLinkProps) => {
 
   const buttonClasses = clsx(
@@ -51,7 +51,7 @@ const ButtonLink = ({
   return (
     <>
       {!href && (
-        <button onClick={onClick} className={buttonClasses} type={type}>
+        <button onClick={onClick} className={buttonClasses} {...props}>
           <ScaleSpan />
           {children}
         </button>

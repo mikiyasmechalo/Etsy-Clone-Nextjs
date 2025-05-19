@@ -12,42 +12,18 @@ import {
 } from "lucide-react";
 import { Rating } from "./ImagesView";
 import { TickIcon } from "../Icons";
-interface Review {
-  reviewerName: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
+import { Review, SellerInfo } from "@/data/types";
+import useProducts from "@/hooks/useProducts";
+import { getImageUrl } from "@/utils/image";
 
 interface ReviewsSectionProps {
   reviews?: Review[];
-  sellerInfo: {
-    name: string;
-    shopLink: string;
-    location?: string;
-    rating: number;
-  };
+  sellerInfo: SellerInfo | undefined;
 }
 
 const ReviewsSection = ({ reviews = [], sellerInfo }: ReviewsSectionProps) => {
   const [activePage, setActivePage] = useState(1);
-  const relatedSearches = [
-    { name: "Easter Sticker", image: "/placeholder.svg?height=60&width=60" },
-    { name: "Printable Easter", image: "/placeholder.svg?height=60&width=60" },
-    { name: "Sticker Sheets", image: "/placeholder.svg?height=60&width=60" },
-    { name: "Happy Spring", image: "/placeholder.svg?height=60&width=60" },
-    { name: "Easter Stickers", image: "/placeholder.svg?height=60&width=60" },
-    { name: "Easter Planner", image: "/placeholder.svg?height=60&width=60" },
-    { name: "Easter Stickers", image: "/placeholder.svg?height=60&width=60" },
-    {
-      name: "Easter Stickers for",
-      image: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      name: "Easter Stickers Bulk",
-      image: "/placeholder.svg?height=60&width=60",
-    },
-  ];
+  const relatedSearches = useProducts();
 
   const buyerHighlights = [
     "Beautiful",
@@ -65,22 +41,22 @@ const ReviewsSection = ({ reviews = [], sellerInfo }: ReviewsSectionProps) => {
       {/* Related Searches */}
       <div className="mb-8">
         <h3 className="text-xl font-medium mb-4">Related searches</h3>
-        <div className="flex flex-wrap gap-4">
-          {relatedSearches.map((item, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full overflow-hidden mb-2">
+        <div className="flex flex-wrap gap-4 justify-between">
+          {relatedSearches.products.slice(0,7).map((item, index) => (
+            <Link href={`/listing/${item.id}`} key={index} className="flex flex-col items-center hover:shadow-md rounded-lg p-2">
+              <div className="w-18 h-18 rounded-full overflow-hidden mb-2">
                 <Image
-                  src={item.image || "/placeholder.svg"}
-                  alt={item.name}
+                  src={getImageUrl(item.images[0]) || "/placeholder.svg"}
+                  alt={item.title}
                   width={60}
                   height={60}
                   className="w-full h-full object-cover"
                 />
               </div>
               <span className="text-xs text-center max-w-[70px] line-clamp-2">
-                {item.name}
+                {item.title}
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -88,9 +64,9 @@ const ReviewsSection = ({ reviews = [], sellerInfo }: ReviewsSectionProps) => {
       {/* Shop Reviews Summary */}
       <div className="mb-6">
         <h2 className="text-2xl font-medium">
-          {sellerInfo.name} has {reviews.length.toLocaleString()} reviews
+          {sellerInfo?.username} has {reviews.length.toLocaleString()} reviews
           <span className="inline-flex ml-2">
-            <Rating rating={sellerInfo.rating} large />
+            <Rating rating={sellerInfo?.rating || 0} large />
           </span>
         </h2>
       </div>
@@ -161,16 +137,16 @@ const ReviewsSection = ({ reviews = [], sellerInfo }: ReviewsSectionProps) => {
 
                   <div className="flex items-center mb-4">
                     <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs font-medium mr-2">
-                      {review.reviewerName.charAt(0)}
+                      {review.username.charAt(0)}
                     </div>
                     <Link
                       href="#"
                       className="text-sm font-medium hover:underline"
                     >
-                      {review.reviewerName}
+                      {review.username}
                     </Link>
                     <span className="text-gray-500 text-sm ml-2">
-                      {review.date}
+                      {review.created_at}
                     </span>
                   </div>
                 </div>
@@ -226,7 +202,7 @@ const ReviewsSection = ({ reviews = [], sellerInfo }: ReviewsSectionProps) => {
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {[1, 2, 3, 4, 5].map((page) => (
+        {reviews.length > 0 && [1, 2, 3, 4, 5].map((page) => (
           <button
             key={page}
             className={`w-8 h-8 rounded-full flex items-center justify-center ${

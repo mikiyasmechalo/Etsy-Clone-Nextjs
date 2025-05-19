@@ -6,9 +6,12 @@ import Link from "next/link";
 import { ProductDetails } from "@/data/products";
 import clsx from "clsx";
 import { IoPlaySharp } from "react-icons/io5";
+import { toast } from "sonner";
+import { Product } from "@/data/types";
+import { getImageUrl } from "@/utils/image";
+import { useAppStore } from "@/store/store";
 
-export interface RectangleCardProps extends ProductDetails {
-  // href: string;
+export interface RectangleCardProps extends Product {
   onLike?: () => void;
   className?: string;
   priceHidden?: boolean;
@@ -20,8 +23,7 @@ const RectangleCard = ({
   images,
   video,
   price,
-  originalPrice,
-  // href,
+  original_price,
   onLike,
   className,
   title = "Card item",
@@ -98,11 +100,13 @@ const RectangleCard = ({
         onMouseLeave={handleMouseLeave}
       >
         <Image
-          src={images[0]}
+          src={
+            images[0].includes("uploads") ? getImageUrl(images[0]) : images[0]
+          }
           alt={"rectangle"}
           width={550}
           height={250}
-          className={`w-full h-auto min-h-full object-cover`}
+          className={`w-full h-auto min-h-full object-cover aspect-[1/1.3] md:min-w-[200]`}
         />
 
         {video && !hideVideo && (
@@ -129,7 +133,7 @@ const RectangleCard = ({
 
         {video && !isVideoPlaying && !isHovered && (
           <div className="absolute p-1 size-5 rounded-full  bg-white bottom-2 right-2 z-10 flex items-center justify-center">
-            <IoPlaySharp className="absolute size-4 left-[3px]"/>
+            <IoPlaySharp className="absolute size-4 left-[3px]" />
           </div>
         )}
 
@@ -141,15 +145,15 @@ const RectangleCard = ({
           }`}
         >
           <span className="">USD {price.toFixed(2)}</span>
-          {originalPrice && (
+          {original_price && (
             <span className="font-light line-through">
-              USD {originalPrice.toFixed(2)}
+              USD {original_price.toFixed(2)}
             </span>
           )}
         </div>
 
         {/* Favorite Button */}
-          <HeartButton isLiked={isLiked} handleLike={handleLike} />
+        <HeartButton isLiked={isLiked} handleLike={handleLike} />
       </div>
     </Link>
   );
@@ -169,25 +173,32 @@ export const HeartButton = ({
   handleLike,
   visible = false,
   large = false,
-  className
+  className,
 }: HeartButtonProps) => {
+  const { isAuthenticatedState: authenticated } = useAppStore();
   const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setScale(1.2);
-    setTimeout(() => {
-      setScale(1);
-    }, 300);
-    handleLike();
+    if (authenticated) {
+      setScale(1.2);
+      setTimeout(() => {
+        setScale(1);
+      }, 300);
+      handleLike();
+    } else {
+      toast.error("You have to be signed in to favorite products.");
+    }
   };
   const [scale, setScale] = useState(1);
 
   return (
-    <div className={clsx(
-      "absolute transition-all duration-200  z-10",
-      !className && "group-hover:top-2 top-4 right-2",
-      className
-    )}>
+    <div
+      className={clsx(
+        "absolute transition-all duration-200  z-10",
+        !className && "group-hover:top-2 top-4 right-2",
+        className
+      )}
+    >
       <button
         onClick={handleLikeClick}
         className={`rounded-full transition-colors duration-200 ${
@@ -212,7 +223,7 @@ export const HeartButton = ({
             style={{ transform: `scale(${scale})` }}
           />
         </div>
-      </button>{" "}
+      </button>
     </div>
   );
 };

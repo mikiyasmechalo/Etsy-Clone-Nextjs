@@ -1,13 +1,19 @@
+"use client";
 import React from "react";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { IoPencil } from "react-icons/io5";
 import { RiShare2Line } from "react-icons/ri";
 import { IoMdTime } from "react-icons/io";
 import { LockIcon } from "@/components/Icons";
-import { productData } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
+import useProducts from "@/hooks/useProducts";
+import useFavorites from "@/hooks/useFavorites";
 
 const page = () => {
+  const { products } = useProducts();
+  const { favorites } = useFavorites();
+  console.log("favorites", favorites);
+  
   return (
     <div className="p-4 max-w ">
       <div className="md:px-8 flex flex-col">
@@ -19,7 +25,7 @@ const page = () => {
               >
                 Favorite items
               </h1>
-              <ButtonLink outline>Sign in</ButtonLink>
+              {/* <ButtonLink outline>Sign in</ButtonLink> */}
             </div>
             <div className="flex items-center space-x-4 ">
               <span className="flex items-center font-medium gap-1">
@@ -35,8 +41,11 @@ const page = () => {
             </div>
           </div>
 
+          {!favorites.length && <div>
+            No items in favorites</div>}
+
           {/* make visible when only not signed in */}
-          <div className="flex items-start flex-col text-gray-700 gap-2 mb-8">
+          {/* <div className="flex items-start flex-col text-gray-700 gap-2 mb-8">
             <div className="flex items-center gap-2">
               <IoMdTime size={24} />
               <p className="font-medium">
@@ -50,12 +59,19 @@ const page = () => {
                 on to your picks.
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex justify-start items-center gap-4">
-          {productData.slice(0, 3).map((p) => (
-            <ProductCard key={p.id} small starVisible ratingHidden product={p} />
+          {favorites.slice(0, 3).map((p) => (
+            <ProductCard
+              key={p.id}
+              small
+              starVisible
+              ratingHidden
+              product={{ ...p, images: [p.image_url] }}
+              dontGrow
+            />
           ))}
         </div>
         <div className="flex flex-col mt-25 gap-4">
@@ -65,7 +81,7 @@ const page = () => {
               starVisible
               ratingHidden
               extraSmall
-              product={productData[0]}
+              product={products[0]}
             />
           </div>
         </div>

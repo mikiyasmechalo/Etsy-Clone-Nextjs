@@ -4,7 +4,8 @@ import { Graphik, GuardianEgyp } from "./fonts";
 
 import ClientFooterWrapper from "@/components/layout/ClientFooterWrapper";
 import ClientHeaderWrapper from "@/components/layout/ClientHeaderWrapper";
-
+import { Toaster } from "sonner";
+import { useAppStore } from "@/store/store";
 
 export const metadata: Metadata = {
   title: "MY ETSY",
@@ -21,10 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`antialiased text-gray-800 ${Graphik.variable} ${Graphik.className} ${GuardianEgyp.variable}`}
+        data-rm-theme="dark"
       >
         <ClientHeaderWrapper />
         {children}
-        <ClientFooterWrapper/>
+        <ClientFooterWrapper />
+        <Toaster />
       </body>
     </html>
   );

@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  IoMenu,
-} from "react-icons/io5";
+import { IoMenu } from "react-icons/io5";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 
 import AnimatedButton, { AnimatedLink } from "../ui/AnimatedButton";
@@ -15,20 +13,60 @@ import clsx from "clsx";
 import SearchInput from "../ui/SearchInput";
 import HoverTipLink from "../HoverTipLink";
 
-const Header = () => {
+import { CartIcon, EtsyLogo, GiftIcon, HeartIcon } from "../Icons";
+import { AUTH_TOKEN_COOKIE_NAME, getAuthTokenCookie } from "@/app/api";
+import { toast } from "sonner";
+import useCategories from "@/hooks/useCategories";
+import { Product } from "@/data/types";
+import useProducts from "@/hooks/useProducts";
+import { FaChevronRight } from "react-icons/fa";
+import { MdOutlineClose } from "react-icons/md";
+import { LogOut, ShoppingBag } from "lucide-react";
+import useCart from "@/hooks/useCart";
+import { useAppStore } from "@/store/store";
+import { GetServerSidePropsContext } from "next";
+
+const Header = ({ authenticated }: { authenticated: boolean }) => {
   const pathname = usePathname();
   pathname.includes("singin");
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const categoriesButtonRef = useRef<HTMLButtonElement>(null);
 
+  const { logout } = useAppStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const [filteredProducts, setFilteredProducts] = useState<Partial<Product>[]>(
+    []
   );
+  const [isSeller, setIsSeller] = useState(false);
+  const { user, checkAuthStatus } = useAppStore();
+  const { products } = useProducts();
+
+  useEffect(() => {
+    if (user) setIsSeller(user.is_seller);
+  }, [user]);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  useEffect(() => {
+    setFilteredProducts(
+      products.filter((product) =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [products, searchTerm]);
+
+  const [IsAuthenticated, setIsAuthenticated] = useState(authenticated);
+
+  useEffect(() => {
+    const token = getAuthTokenCookie();
+    setIsAuthenticated(!!token);
+  }, []);
+
   const [inputActive, setInputActive] = useState(false);
-  const [cartItems] = useState(1);
-  
+  const { cartItemsAmount } = useCart();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -52,13 +90,14 @@ const Header = () => {
   useEffect(() => {
     if (categoriesOpen) {
       const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth; // Calculate scrollbar width
-      document.body.style.overflow = "hidden"; // Disable scrolling
-      document.body.style.paddingRight = `${scrollbarWidth}px`; // Add padding to compensate for scrollbar
+        window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
-      document.body.style.overflow = ""; // Restore scrolling
-      document.body.style.paddingRight = ""; // Reset padding
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
+
     if (!inputActive) setSearchTerm("");
   }, [categoriesOpen, inputActive]);
 
@@ -123,24 +162,46 @@ const Header = () => {
                   <div
                     className={clsx(
                       "absolute top-full z-10 mt-2 w-full transition-all duration-200 overflow-hidden rounded-xl",
-                      inputActive ? "shadow-all-round max-h-85 max-w-200" : " max-h-0 max-w-100 pointer-events-none"
+                      inputActive
+                        ? "shadow-all-round max-h-85 max-w-200"
+                        : " max-h-0 max-w-100 pointer-events-none"
                     )}
                   >
                     <SearchResults
                       open={inputActive}
-                      filteredCategories={filteredCategories}
+                      filteredProducts={filteredProducts}
                     />
                   </div>
                 </div>
               </div>
               <div className="flex items-center">
-                <AnimatedLink href="/signin" className="text-xsm text-nowrap">
-                  Sign in
-                </AnimatedLink>
+                {!IsAuthenticated && (
+                  <AnimatedLink href="/signin" className="text-xsm text-nowrap">
+                    Sign in
+                  </AnimatedLink>
+                )}
+                {isSeller ? (
+                  <HoverTipLink
+                    tip="your shop"
+                    hoverColor="#ccebff"
+                    href="/myshop"
+                  >
+                    <ShoppingBag className="size-6" />
+                  </HoverTipLink>
+                ) : (
+                  ""
+                )}
                 <HoverTipLink
-                  href="/favorites"
+                  href={IsAuthenticated ? "/favorites" : undefined}
                   tip="Favorites"
                   hoverColor="#ccebff"
+                  onClick={
+                    !IsAuthenticated
+                      ? () => {
+                          toast.error("You have to be signed in.");
+                        }
+                      : undefined
+                  }
                 >
                   <HeartIcon className="size-6 hover:fill-[#122868]" />
                 </HoverTipLink>
@@ -148,13 +209,26 @@ const Header = () => {
                   <GiftIcon className="size-6 hover:fill-[#122868]" />
                 </HoverTipLink>
                 <HoverTipLink
-                  href="/cart"
+                  href={IsAuthenticated ? "/cart" : undefined}
                   tip="Cart"
                   hoverColor="#ccebff"
-                  badge={cartItems}
+                  badge={cartItemsAmount}
+                  onClick={
+                    !IsAuthenticated
+                      ? () => toast.error("You have to be signed in.")
+                      : undefined
+                  }
                 >
                   <CartIcon className="size-6 hover:fill-[#122868]" />
                 </HoverTipLink>
+                {IsAuthenticated && (
+                  <AnimatedButton
+                    className="flex gap-2 text-xsm"
+                    onClick={logout}
+                  >
+                    <LogOut className="size-4.5" /> Logout
+                  </AnimatedButton>
+                )}
               </div>
             </div>
             <div className="md:flex gap-3 mx-auto hidden">
@@ -181,14 +255,25 @@ const Header = () => {
               <Link href={"/"} className="sm:min-w-20 w-15 fill-orange-500">
                 <EtsyLogo />
               </Link>
-              <ButtonLink
-                href="/register"
-                btnClassName="text-xsm text-nowrap text-black py-2 hover:scale-101"
-                className="bg-white border"
-                small
-              >
-                Register
-              </ButtonLink>
+              {pathname.includes("signin") ? (
+                <ButtonLink
+                  href="/register"
+                  btnClassName="text-xsm text-nowrap text-black py-2 hover:scale-101"
+                  className="bg-white border"
+                  small
+                >
+                  Register
+                </ButtonLink>
+              ) : (
+                <ButtonLink
+                  href="/signin"
+                  btnClassName="text-xsm text-nowrap text-black py-2 hover:scale-101"
+                  className="bg-white border"
+                  small
+                >
+                  Signin
+                </ButtonLink>
+              )}
             </div>
           </>
         )}
@@ -201,77 +286,44 @@ const Header = () => {
 export default Header;
 
 export const SearchResults = ({
-  filteredCategories,
+  filteredProducts,
+  open,
 }: {
-  filteredCategories: Category[];
+  filteredProducts: Partial<Product>[];
   open: boolean;
 }) => {
-  if (!filteredCategories.length)
-    return filteredCategories.push({ name: "No results", href: "#" });
+  if (!filteredProducts || filteredProducts.length === 0) {
+    return (
+      <div className="w-full bg-white shadow-full rounded-xl pl-4 py-3 text-gray-700">
+        No results
+      </div>
+    );
+  }
+
   return (
     <div
-      className="menu-scroll-container w-full bg-white shadow-full rounded-xl max-h-screen 
-      pl-1 pr-1.5 overflow-y-auto overflow-x-hidden 
+      className="menu-scroll-container w-full bg-white shadow-full rounded-xl max-h-screen
+      pl-1 pr-1.5 overflow-y-auto overflow-x-hidden
     transition-all duration-200 flex flex-col py-"
     >
-      {filteredCategories.slice(0, 6).map((category, i) => (
+      {filteredProducts.slice(0, 6).map((product, i) => (
         <Link
-          key={category.href}
-          href={category.href}
+          key={product.id || `product-${i}`}
+          href={`/listing/${product.id}`}
           className={`${i === 0 && "mt-1"}
           focus-visible:outline-none! focus-visible:ring-2! focus-visible:ring-blue-500! focus-visible:bg-gray-100
-          flex justify-between pr-7 items-ecnter text-truncate w-full pl-4 py-3 
+          flex justify-between pr-7 items-ecnter text-truncate w-full pl-4 py-3
           text-gray-700 hover:bg-gray-100 transition-colors duration-150 hover:underline!`}
           role="menuitem"
           tabIndex={0}
         >
-          {category.name}
+          {product.title}
           <FaChevronRight className="block md:hidden" />
         </Link>
       ))}
     </div>
   );
 };
-
-interface Category {
-  name: string;
-  href: string;
-}
-
-const categories: Category[] = [
-  { name: "Accessories", href: "/c/accessories?ref=catnav-1" },
-  { name: "Art & Collectibles", href: "/c/art-and-collectibles?ref=catnav-66" },
-  { name: "Baby", href: "/c/baby?ref=catnav-12545" },
-  { name: "Bags & Purses", href: "/c/bags-and-purses?ref=catnav-132" },
-  { name: "Bath & Beauty", href: "/c/bath-and-beauty?ref=catnav-199" },
-  {
-    name: "Books, Movies & Music",
-    href: "/c/books-movies-and-music?ref=catnav-323",
-  },
-  { name: "Clothing", href: "/c/clothing?ref=catnav-374" },
-  {
-    name: "Craft Supplies & Tools",
-    href: "/c/craft-supplies-and-tools?ref=catnav-562",
-  },
-  {
-    name: "Electronics & Accessories",
-    href: "/c/electronics-and-accessories?ref=catnav-825",
-  },
-  { name: "Gifts", href: "/c/gifts?ref=catnav-12584" },
-  { name: "Home & Living", href: "/c/home-and-living?ref=catnav-891" },
-  { name: "Jewelry", href: "/c/jewelry?ref=catnav-1179" },
-  {
-    name: "Paper & Party Supplies",
-    href: "/c/paper-and-party-supplies?ref=catnav-1250",
-  },
-  { name: "Pet Supplies", href: "/c/pet-supplies?ref=catnav-1351" },
-  { name: "Shoes", href: "/c/shoes?ref=catnav-1429" },
-  { name: "Toys & Games", href: "/c/toys-and-games?ref=catnav-1552" },
-  { name: "Weddings", href: "/c/weddings?ref=catnav-1633" },
-];
-import { MdOutlineClose } from "react-icons/md";
-import { FaChevronRight } from "react-icons/fa";
-import { CartIcon, EtsyLogo, GiftIcon, HeartIcon } from "../Icons";
 
 const EtsyCategoryMenu = ({
   onClose,
@@ -284,16 +336,18 @@ const EtsyCategoryMenu = ({
 
   useEffect(() => {
     if (refs.current[0]) {
-      refs.current[0].focus(); // Focus the first item when menu opens
+      refs.current[0].focus();
       refs.current[0].classList.add("focus-visible");
     }
     if (open) {
-      const menuElement = document.querySelector(".menu-scroll-container"); // Select your scrollable container
+      const menuElement = document.querySelector(".menu-scroll-container");
       if (menuElement) {
-        menuElement.scrollTop = 0; // Reset scroll to the top
+        menuElement.scrollTop = 0;
       }
     }
   }, [open]);
+
+  const { categories } = useCategories();
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLAnchorElement>,
@@ -301,11 +355,11 @@ const EtsyCategoryMenu = ({
   ) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      const nextIndex = (index + 1) % categories.length; // Go to the next item, loop to the start
+      const nextIndex = (index + 1) % categories.length;
       refs.current[nextIndex]?.focus();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      const prevIndex = (index - 1 + categories.length) % categories.length; // Go to the previous item, loop to the end
+      const prevIndex = (index - 1 + categories.length) % categories.length;
       refs.current[prevIndex]?.focus();
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -336,12 +390,12 @@ const EtsyCategoryMenu = ({
             ref={(el) => {
               refs.current[i] = el;
             }}
-            key={category.href}
+            key={category.id}
             onClick={onClose}
-            href={category.href}
+            href={`/c/${category.id}`}
             className={`${i === 0 && "mt-1"}
             focus-visible:outline-none! focus-visible:ring-2! focus-visible:ring-blue-500! focus-visible:bg-gray-100
-            flex justify-between pr-7 items-ecnter text-truncate w-full pl-4 py-3 
+            flex justify-between pr-7 items-ecnter text-truncate w-full pl-4 py-3
             text-gray-700 hover:bg-gray-100 transition-colors duration-150 hover:underline!`}
             role="menuitem"
             tabIndex={0}
@@ -355,3 +409,15 @@ const EtsyCategoryMenu = ({
     </div>
   );
 };
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const token = context.req.cookies[AUTH_TOKEN_COOKIE_NAME];
+  console.log("token", token);
+  const authenticated = !!token;
+
+  return {
+    props: {
+      authenticated,
+    },
+  };
+}

@@ -1,5 +1,5 @@
 "use client";
-import { ProductDetails } from "@/data/products";
+import { productData } from "@/data/products";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -11,28 +11,42 @@ import { TfiRulerAlt2 } from "react-icons/tfi";
 import { HandShake, HandWave, Leaf, PartyHat, TickIcon } from "../Icons";
 import { TbTruckDelivery } from "react-icons/tb";
 import { MdEdit } from "react-icons/md";
+import { Product, SellerInfo } from "@/data/types";
+import useCart from "@/hooks/useCart";
 
-const SideDetails = ({ data }: { data: ProductDetails }) => {
+const SideDetails = ({
+  product: product,
+  sellerInfo,
+}: {
+  product: Product;
+  sellerInfo: SellerInfo;
+}) => {
   const [isItemDetailsOpen, setIsItemDetailsOpen] = useState(false);
   const [isShippingOpen, setIsShippingOpen] = useState(false);
   const [isDidYouKnowOpen, setIsDidYouKnowOpen] = useState(false);
   const [isSellerOpen, setIsSellerOpen] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const { addItemToCart, fetchCart } = useCart();
+  function onAddToCart() {
+    addItemToCart(product.id, quantity);
+  }
+
   return (
     <div className=" space-y-6">
       <div>
-        <h2 className="text-2xl font-medium">USD {data.price}+</h2>
+        <h2 className="text-2xl font-medium">USD {product.price}+</h2>
         <p className="text-sm text-gray-600">
           Local taxes included (where applicable)
         </p>
       </div>
 
-      <h1 className="">{data.title}</h1>
+      <h1 className="">{product.title}</h1>
 
       <div className="flex items-center space-x-1">
         <Link href="#" className="text-xsm font-medium hover:underline!">
-          {data.sellerInfo.name}
+          {sellerInfo.username}
         </Link>
-        {data.sellerInfo.rating && <Rating rating={data.sellerInfo.rating} />}
+        {sellerInfo.rating && <Rating rating={sellerInfo.rating} />}
       </div>
 
       <div className="flex items-center text-sm">
@@ -72,6 +86,8 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
           <div className="relative mt-1">
             <select
               id="quantity"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
               className="block w-full p-3 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#1967d2]"
             >
               <option value="1">1</option>
@@ -86,7 +102,9 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
           </div>
         </div>
 
-        <ButtonLink btnClassName="w-full hover:scale-">Add to cart</ButtonLink>
+        <ButtonLink btnClassName="w-full hover:scale-" onClick={onAddToCart}>
+          Add to cart
+        </ButtonLink>
       </div>
       {/* Item Details Section */}
       <div className="">
@@ -113,7 +131,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
                 </span>
                 <span>
                   Made by{" "}
-                  <span className="font-medium">{data.sellerInfo.name}</span>
+                  <span className="font-medium">{sellerInfo.username}</span>
                 </span>
               </div>
 
@@ -136,7 +154,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
             </div>
 
             <div className="space-y-3">
-              {data.itemDetails?.additionalDetail}
+              {productData[0].itemDetails?.additionalDetail}
             </div>
 
             <button className="text-center w-full py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
@@ -167,7 +185,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
               <div>
                 <span>Order today to get by </span>
                 <span className="font-medium underline underline-offset-4 decoration-dashed! ">
-                  {data.shippingInfo.estimatedDelivery}
+                  {productData[0].shippingInfo.estimatedDelivery}
                 </span>
               </div>
             </div>
@@ -188,7 +206,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
               <div>
                 <span>Cost to ship: </span>
                 <span className="font-medium">
-                  USD {data.shippingInfo.cost}
+                  USD {productData[0].shippingInfo.cost}
                 </span>
               </div>
             </div>
@@ -198,7 +216,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
               <div>
                 <span>Ships from: </span>
                 <span className="font-medium">
-                  {data.shippingInfo.countryFrom}
+                  {productData[0].shippingInfo.countryFrom}
                 </span>
               </div>
             </div>
@@ -235,7 +253,8 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
                 <p className="font-medium">Etsy Purchase Protection</p>
                 <p className="text-sm">
                   Shop confidently on Etsy knowing if something goes wrong with
-                  an order, we&apos;ve got your back for all eligible purchases —{" "}
+                  an order, we&apos;ve got your back for all eligible purchases
+                  —{" "}
                   <Link href="#" className="underline!">
                     see program terms
                   </Link>
@@ -290,7 +309,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
                 />
               </div>
               <div>
-                <h4 className="text-xl font-medium">Josephin</h4>
+                <h4 className="text-xl font-medium">{sellerInfo.username}</h4>
                 <p className="text-sm">
                   Owner of{" "}
                   <Link href="#" className="hover:underline">
@@ -306,7 +325,7 @@ const SideDetails = ({ data }: { data: ProductDetails }) => {
             </button>
 
             <button className="w-full py-3 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-              Message Josephin
+              Message {sellerInfo.username}
             </button>
 
             <p className="text-sm text-center">
@@ -413,9 +432,9 @@ export const FAQData = () => {
                   letter/parcel leaves Germany.
                 </p>
                 <p className="mt-2">
-                  Sometimes, the envelopes or parcels won&apos;t get scanned at all,
-                  which results in the status &apos;Pre-Transit&apos;. Don&apos;t worry, your
-                  order is on it&apos;s way to you!
+                  Sometimes, the envelopes or parcels won&apos;t get scanned at
+                  all, which results in the status &apos;Pre-Transit&apos;.
+                  Don&apos;t worry, your order is on it&apos;s way to you!
                 </p>
               </div>
             )}
@@ -539,8 +558,8 @@ export const FAQData = () => {
                   mail.
                 </p>
                 <p className="mt-2">
-                  If a package is returned due to the customer&apos;s failure to pick
-                  it up or reschedule the delivery, the shipping fee is
+                  If a package is returned due to the customer&apos;s failure to
+                  pick it up or reschedule the delivery, the shipping fee is
                   non-refundable, as the shipping service was already provided.
                   A refund will be issued only for the product(s) cost.
                 </p>

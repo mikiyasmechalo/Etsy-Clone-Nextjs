@@ -3,27 +3,70 @@
 import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { Check } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebook } from "react-icons/fa";
 import ButtonLink from "./ButtonLink";
+import { register, signIn } from "@/app/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "@/store/store";
 
 interface AuthFormProps {
   type: "signin" | "register";
 }
 
 export default function AuthForm({ type }: AuthFormProps) {
-  const [firstName, setFirstName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [staySignedIn, setStaySignedIn] = useState(false);
+  const [isSeller, setIsSeller] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const resetFields = () => {
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setIsSeller(false);
+  };
+  const { checkAuthStatus, isAuthenticatedState, signIn } = useAppStore();
+  if (isAuthenticatedState) router.push("/");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (type === "signin") {
-      console.log("Signing in:", { email, password, staySignedIn });
+      signIn({ email, password });
     } else {
-      console.log("Registering:", { firstName, email, password, staySignedIn });
+      console.log("Registering:", {
+        username,
+        email,
+        password,
+        isSeller,
+      });
+
+      try {
+        const response = await register({
+          username,
+          email,
+          password,
+          is_seller: isSeller,
+        });
+        if (response.success) {
+          toast.success("Registered successfully, Please signin");
+          router.push("/signin");
+        } else {
+          const errorResponse = response.error as any;
+          const errors = errorResponse.errors;
+          if (errors && Array.isArray(errors)) {
+            errors.forEach((error) => {
+              toast.error(error);
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        toast.error("An error occurred during registration.");
+      }
     }
   };
 
@@ -54,22 +97,26 @@ export default function AuthForm({ type }: AuthFormProps) {
         </div>
 
         {type === "register" && (
-          <div className="mb-4">
-            <label
-              htmlFor="firstName"
-              className="block text-sm font-medium mb-1"
-            >
-              First Name
-            </label>
-            <input
-              type="text"
-              id="firstName"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
-              required
-            />
-          </div>
+          <>
+            {" "}
+            {/* Use a fragment to group multiple elements */}
+            <div className="mb-4">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium mb-1"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
+                required
+              />
+            </div>
+          </>
         )}
 
         <div className="mb-4">
@@ -86,8 +133,24 @@ export default function AuthForm({ type }: AuthFormProps) {
           />
         </div>
 
+        {/* Register as Seller Checkbox - Moved Here */}
+        {type === "register" && (
+          <div className="mb-4 flex items-center">
+            <input
+              type="checkbox"
+              id="isSeller"
+              checked={isSeller}
+              onChange={(e) => setIsSeller(e.target.checked)}
+              className="mr-2 h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
+            />
+            <label htmlFor="isSeller" className="text-sm font-medium">
+              Register me as a seller
+            </label>
+          </div>
+        )}
+
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <div
               className={`w-5 h-5 border ${
                 staySignedIn ? "bg-black border-black" : "border-gray-500"
@@ -103,11 +166,11 @@ export default function AuthForm({ type }: AuthFormProps) {
             >
               Stay signed in
             </label>
-          </div>
+          </div> */}
 
           {type === "signin" && (
             <Link
-              href="/forgot-password"
+              href="#"
               className="text-xsm text-gray-700 underline! font-light underline-offset-2"
             >
               Forgot your password?
@@ -118,11 +181,11 @@ export default function AuthForm({ type }: AuthFormProps) {
           <p className="text-sm text-gray-700 mb-4">
             By clicking {buttonText}, Continue with Google, Facebook, or Apple,
             you agree to Etsy&apos;s{" "}
-            <Link href="/terms" className="text-[#4d6bc6] underline!">
+            <Link href="#" className="text-[#4d6bc6] underline!">
               Terms of Use
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#4d6bc6] underline!">
+            <Link href="#" className="text-[#4d6bc6] underline!">
               Privacy Policy
             </Link>
             .
@@ -138,7 +201,7 @@ export default function AuthForm({ type }: AuthFormProps) {
       {type === "signin" && (
         <div className="mt-4 text-center">
           <Link
-            href="/trouble-signing-in"
+            href="#"
             className="text-xsm text-gray-700 underline! font-light underline-offset-2"
           >
             Trouble signing in?
@@ -177,11 +240,11 @@ export default function AuthForm({ type }: AuthFormProps) {
           <p>
             By clicking {buttonText}, Continue with Google, Facebook, or Apple,
             you agree to Etsy&apos;s{" "}
-            <Link href="/terms" className="text-black hover:underline">
+            <Link href="#" className="text-black hover:underline">
               Terms of Use
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-black hover:underline">
+            <Link href="#" className="text-black hover:underline">
               Privacy Policy
             </Link>
             .

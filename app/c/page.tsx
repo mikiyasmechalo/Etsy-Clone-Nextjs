@@ -1,17 +1,15 @@
-import Link from "next/link"
+"use client";
+import useCategories from "@/hooks/useCategories";
+import Link from "next/link";
 
 export default function CategoryIndexPage() {
-  const categories = [
-    { id: "accessories", name: "Accessories" },
-    { id: "jewelry", name: "Jewelry" },
-    { id: "clothing", name: "Clothing" },
-    { id: "home-decor", name: "Home Decor" },
-    { id: "art", name: "Art" },
-  ]
+  const { categories } = useCategories();
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-medium mb-8 text-center">Browse Categories</h1>
+      <h1 className="text-3xl font-medium mb-8 text-center">
+        Browse Categories
+      </h1>
 
       <div className="grid gap-4 max-w-md mx-auto">
         {categories.map((category) => (
@@ -25,5 +23,5 @@ export default function CategoryIndexPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -20,41 +20,55 @@ const Page = () => {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (!video.paused) setCanPlay(true);
+
+    const checkCanPlay = () => {
+      if (video.readyState >= 3 || !video.paused) {
+        setCanPlay(true);
+      }
+    };
+
+    video.addEventListener("canplaythrough", checkCanPlay);
+    video.addEventListener("play", checkCanPlay);
+
+    checkCanPlay();
+
+    return () => {
+      video.removeEventListener("canplaythrough", checkCanPlay);
+      video.removeEventListener("play", checkCanPlay);
+    };
   }, []);
 
   return (
-    <div className="flex flex-col justify-center md:pt-32 font-g">
-      <div className="flex w-full max-wsm px-8">
+    <div className="flex flex-col justify-center md:pt -32 font-g min-h-screen">
+      <div className="flex w-full max-w-7xl mx-auto px-8">
         <div className="flex w-full md:flex-row flex-col">
-          <div className="lg:w-1/2 md:w-2/6 lg:p-10 relative flex items-center justify-center">
-            <div className="md:sticky top-0 left-0 md:w-full relative w-lg">
+          <div className="lg:w-1/2 md:w-2/6 lg:p-10 relative flex items-center justify-center md:sticky top-0 h-screen">
+            <div className="relative w-full md:w-full lg:px-10">
               {!canPlay && (
-                <span className="pt-20 relative w-full lg:px-10 translate-x-1.5 -translate-y-10.5 transition-opacity duration-300 ">
+                <span className="relative w-full lg:px-10 transition-opacity duration-300 flex justify-center items-center">
                   <ShopIcon />
                 </span>
               )}
               <video
                 src="/animation1.mp4"
-                className={`pt-20 md:block hidden md:pt -0 relative w-full lg:px-10 translate-x-1.5 -translate-y-10.5 transition-opacity duration-300 ${
+                className={`relative w-full h-full object-cover transition-opacity duration-300 ${
                   canPlay
                     ? "opacity-100"
-                    : "opacity-0 absolute pointer-events-none "
+                    : "opacity-0 absolute pointer-events-none"
                 }`}
                 autoPlay
                 loop
                 muted
+                playsInline
                 ref={videoRef}
+                onCanPlayThrough={() => setCanPlay(true)}
               />
             </div>
-            {/* <div className="relative h-120"></div> */}
           </div>
+
           <div className="lg:w-1/2 md:w-4/6 p-3 flex flex-col gap-6">
-            <div className="h-[150vh md:pb-50 pb-10 flex flex-col justify-center space-y-6">
-              <h1
-                className="lg:text-[78px] md:text-6xl text-6xl font-light md:leading-16 lg:leading-20 mb-10 text-left"
-                style={{ wordSpacing: "100vw" }}
-              >
+            <div className="min-h-[150vh] md:pb-20 pb-5 flex flex-col justify-center space-y-6">
+              <h1 className="lg:text-[78px] md:text-6xl text-6xl font-light md:leading-16 lg:leading-20 mb-10 text-left">
                 Keep Commerce Human
               </h1>
               <p className="sm:text-[25px] text-lg font-light lg:leading-[2.7rem] md:leading-9 mb-4 text-left">
@@ -62,7 +76,7 @@ const Page = () => {
                 It&apos;s home to a{" "}
                 <Link
                   href={"#extraordinary-items"}
-                  className="underline! decoration-[#f5640080]! hover:decoration-[#f56400]! decoration-[0.5px]! underline-offset-8!"
+                  className="underline decoration-[#f5640080] hover:decoration-[#f56400] decoration-[0.5px] underline-offset-8"
                 >
                   universe of special, extraordinary items,
                 </Link>{" "}
@@ -114,8 +128,8 @@ const Page = () => {
 const HowEtsyWorks = () => {
   return (
     <div className="bg-[#303044] lg:py-70 py-20 text-white font-light w-full relative">
-      <div className="max-wsm md:flex">
-        <div className="lg:w-1/2 p-2 md:p-0 :space-y-30 space-y-10 lg:space-y-70">
+      <div className="max-w-7xl mx-auto md:flex">
+        <div className="lg:w-1/2 p-2 md:p-0 space-y-10 lg:space-y-70">
           <div className="">
             <h3 className="sm:text-5xl text-3xl pb-5"> How Etsy Works </h3>
             <p className="sm:text-xl text-sm md:text-[24px] sm:pr-15 md:leading-9 leading-normal font-gr sm:font-g">
@@ -124,12 +138,14 @@ const HowEtsyWorks = () => {
               what they love and helps buyers find what they love.
             </p>
           </div>
+
           <div className="sm:hidden size-[210] bg-[#454557] my-15 mx-auto rounded-full relative">
             <CourtHammerIcon className="absolute translate-x-1/3 -top-10 sm:hidden bg-[#da726b] flex-shrink-0 size-[124px] aspect-square rounded-full" />
             <HandWithMailIcon className="absolute -bottom-5 -right-10 sm:hidden size-[124px] rounded-full aspect-square flex-shrink-0 bg-[#f2d0b8]" />
-            <DoorOpenIcon className="absolute sm:hidden -bottom-5  -left-10 size-[124px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
+            <DoorOpenIcon className="absolute sm:hidden -bottom-5  -left-10 size-[124px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
           </div>
-          <div className="flex gap-10 w-full sm:px-10">
+
+          <div className="flex gap-10 w-full sm:px-10 lg:px-0">
             <CourtHammerIcon className="sm:block hidden lg:hidden bg-[#da726b] flex-shrink-0 size-[130px] aspect-square rounded-full" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">
@@ -147,7 +163,7 @@ const HowEtsyWorks = () => {
               </button>
             </div>
           </div>
-          <div className="flex gap-10 w-full sm:px-10">
+          <div className="flex gap-10 w-full sm:px-10 lg:px-0">
             <HandWithMailIcon className="sm:block hidden lg:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f2d0b8]" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">
@@ -166,7 +182,7 @@ const HowEtsyWorks = () => {
               </button>
             </div>
           </div>
-          <div className="flex gap-10 w-full sm:px-10">
+          <div className="flex gap-10 w-full sm:px-10 lg:px-0">
             <DoorOpenIcon className="sm:block hidden lg:hidden size-[130px] rounded-full aspect-square flex-shrink-0 bg-[#f56400]" />
             <div className="">
               <h3 className="md:text-5xl text-xl pb-5">Shop securely </h3>
@@ -183,6 +199,7 @@ const HowEtsyWorks = () => {
             </div>
           </div>
         </div>
+
         <div className="relative lg:block hidden lg:w-1/2">
           <div className="sticky top-0 min-h-screen flex items-center justify-center left-0">
             <Image
@@ -208,30 +225,39 @@ const FindOut = () => {
       <ScrollableContainer
         items={[
           <>
-            <h3 className="md:text-[43px] text-3xl text-white font-light mb-4">
+            <h3 className="md:text-[43px] text-3xl text-white font-light mb-4 text-center">
               Where can I find news about Etsy?
             </h3>
-            <p className="text-sm font-gr">
+            <p className="text-sm font-gr text-center">
               You&apos;ll find product announcements, company news and stories
               about our community members at our{" "}
-              <Link className="underline!" href="https://www.etsy.com/news/">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="https://www.etsy.com/news/"
+              >
                 news blog
               </Link>
               . For investor news and presentations, SEC filings and leadership
               and governance information, visit our{" "}
-              <Link className="underline!" href="https://investors.etsy.com">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="https://investors.etsy.com"
+              >
                 Investor Relations
               </Link>{" "}
               site.
             </p>
           </>,
           <>
-            <h3 className="md:text-[43px] text-3xl text-white font-light">
+            <h3 className="md:text-[43px] text-3xl text-white font-light text-center">
               Is Etsy hiring?
             </h3>
-            <p className="text-sm font-gr">
+            <p className="text-sm font-gr text-center">
               Yes! Visit our{" "}
-              <Link className="underline! underline-offset-2" href={"#"}>
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href={"#"}
+              >
                 careers page
               </Link>
               to see our open roles and to learn what it&apos;s like to be a
@@ -239,38 +265,53 @@ const FindOut = () => {
             </p>
           </>,
           <>
-            <h3 className="md:text-[43px] text-3xl text-white font-light">
+            <h3 className="md:text-[43px] text-3xl text-white font-light text-center">
               I&apos;m ready to shop. Where do I begin?
             </h3>
-            <p className="text-sm font-gr">
+            <p className="text-sm font-gr text-center">
               Visit etsy.com to start exploring. If you&apos;re looking for
               something specific,{" "}
-              <Link className="underline! underline-offset-2" href="#">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="#"
+              >
                 search away
               </Link>
               , or find inspiration through{" "}
-              <Link className="underline! underline-offset-2" href="#">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="#"
+              >
                 The Etsy Journal
               </Link>
               . You can join the Etsy community by{" "}
-              <Link className="underline! underline-offset-2" href="#">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="#"
+              >
                 registering for an account
               </Link>
               .
             </p>
           </>,
           <>
-            <h3 className="md:text-[43px] text-3xl text-white font-light">
+            <h3 className="md:text-[43px] text-3xl text-white font-light text-center">
               How do I become an Etsy Seller?
             </h3>
-            <p className="text-sm font-gr">
+            <p className="text-sm font-gr text-center">
               If you want to sell your handmade, vintage or craft items on Etsy,
               check that they fit within our{" "}
-              <Link className="underline! underline-offset-2" href="#">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="#"
+              >
                 Seller Policy
               </Link>
               . Then,{" "}
-              <Link className="underline! underline-offset-2" href="#">
+              <Link
+                className="underline underline-offset-2 hover:decoration-white"
+                href="#"
+              >
                 visit etsy.com/sell
               </Link>{" "}
               to set up your shop. It only takes 20 cents and your imagination
@@ -283,6 +324,8 @@ const FindOut = () => {
   );
 };
 
+export default Page;
+
 const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeItem, setActiveItem] = useState(0);
@@ -290,8 +333,8 @@ const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
   const scrollLeft = () => {
     if (containerRef.current) {
       containerRef.current.scrollBy({
-        left: -containerRef.current.clientWidth, // Scroll 1 item's width
-        behavior: "smooth", // Smooth animation
+        left: -containerRef.current.clientWidth,
+        behavior: "smooth",
       });
     }
     setActiveItem(Math.max(0, activeItem - 1));
@@ -357,5 +400,3 @@ const ScrollableContainer = ({ items }: { items: React.ReactNode[] }) => {
     </div>
   );
 };
-
-export default Page;

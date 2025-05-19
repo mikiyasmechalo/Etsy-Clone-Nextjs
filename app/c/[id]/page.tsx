@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -8,27 +8,46 @@ import ButtonLink from "@/components/ui/ButtonLink";
 import clsx from "clsx";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown";
-import { categoryData, categoryDataProps } from "@/data/categories";
 import ProductCard from "@/components/ProductCard";
+import { getCategoriyById, getProductsByCategory } from "@/app/api";
+import useCategories from "@/hooks/useCategories";
+import { Category, Product } from "@/data/types";
+import { getImageUrl } from "@/utils/image";
 
 export default function Page() {
   const [activePage, setActivePage] = useState(1);
   const params = useParams();
   const categoryId = params.id as string;
   const [showAll, setShowAll] = useState(false);
-
-  const categoryInfo: categoryDataProps = categoryData.find(
-    (category) => category.title === categoryId
-  ) || {
-    title: "Category Not Found",
-    subtitle: "Please check the URL and try again",
-    categories: [],
-    featuredProducts: [],
-  };
+  const [categoryInfo, setCategoryInfo] = useState<Category>();
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    const fetchCatProducts = async () => {
+      const result = await getCategoriyById(Number(categoryId));
+      if (result.success) {
+        console.log("Category with id " + categoryId, result.data);
+        result.data && setCategoryInfo(result.data[0]);
+      } else {
+        console.log("Category not found");
+      }
+    };
+    fetchCatProducts();
+  }, []);
+  useEffect(() => {
+    const fetchCatProducts = async () => {
+      const result = await getProductsByCategory(Number(categoryId));
+      if (result.success) {
+        setProducts(result.data);
+      }
+    };
+    fetchCatProducts();
+  }, []);
 
   const initialDisplayCount = 6;
 
-  const hiddenCount = categoryInfo.categories.length - initialDisplayCount;
+  const { categories } = useCategories();
+
+  const hiddenCount = categories.length - initialDisplayCount;
   const sortOptions = ["newest", "price-low-to-high", "price-high-to-low"];
   const [sortOption, setSortOption] = useState("newest");
   const onSelect = (option: string) => {
@@ -40,16 +59,18 @@ export default function Page() {
       <div className="flex mx-auto sm:px-4 py-8 flex-col w-fit justify-center max-w-[1104px]">
         <div className="text-center mb-8">
           <h1 className={`text-3xl font-light mb-2 font-g`}>
-            {categoryInfo.title}
+            {categoryInfo?.name}
           </h1>
-          <p className="text-gray-600 text-sm">{categoryInfo.subtitle}</p>
+          <p className="text-gray-600 text-sm">
+            {categoryInfo?.name || "category name"}
+          </p>
         </div>
 
         <div className="sm:flex grid grid-cols-2 grid-rows-3 flex-wrap sm:gap-8 gap-4 justify-items-center sm:justify-between">
-          {categoryInfo.categories.map((category, index) => (
+          {categories.map((category, index) => (
             <Link
               key={category.id}
-              href={category.link}
+              href={`/c/${category.id}`}
               className={clsx(
                 "flex flex-col items-center group w-fit",
                 "transition-all duration-500 ease-out",
@@ -63,7 +84,7 @@ export default function Page() {
             >
               <div className="rounded-lg overflow-hidden mb-2 ">
                 <Image
-                  src={category.image || "/placeholder.svg"}
+                  src={getImageUrl(category.image) || "/placeholder.svg"}
                   alt={category.name}
                   height={210}
                   width={140}
@@ -75,7 +96,7 @@ export default function Page() {
           ))}
         </div>
 
-        {categoryInfo.categories.length > initialDisplayCount && (
+        {categories.length > initialDisplayCount && (
           <div className="flex justify-center">
             <ButtonLink
               onClick={() => setShowAll((f) => !f)}
@@ -89,7 +110,7 @@ export default function Page() {
         )}
       </div>
 
-      {categoryInfo.featuredProducts.length > 0 && (
+      {products.length > 0 && (
         <div className="flex flex-col gap-4">
           <div className="w-full flex justify-end">
             <div className="relative mt-1 flex">
@@ -102,7 +123,7 @@ export default function Page() {
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            {categoryInfo.featuredProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -142,7 +163,7 @@ export default function Page() {
       </div>
       <div className="mt-10">
         <h3 className="text-2xl font-medium">Shop by Interest</h3>
-        <p className="text-sm text-gray-600">{categoryInfo.title}</p>
+        <p className="text-sm text-gray-600">{categoryInfo?.name}</p>
         {(() => {
           const data = [
             {
